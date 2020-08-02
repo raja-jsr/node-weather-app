@@ -1,15 +1,16 @@
 const path = require('path')
 const express = require('express')
-const app = express()
 const hbs = require('hbs')
 const geocode = require('./utils/geocode')
 const forecast = require('./utils/forecast')
-const { error } = require('console')
+
+const app = express()
+const port = process.env.PORT || 3000
 
 // Define path for express config
 const publicPath = path.join(__dirname, '../public')
-const viewPath = path.join(__dirname,'../templates/views')
-const partialsPath = path.join(__dirname,'../templates/partials')
+const viewPath = path.join(__dirname, '../templates/views')
+const partialsPath = path.join(__dirname, '../templates/partials')
 
 
 // Setup handlebar engine and view location
@@ -40,43 +41,43 @@ app.use(express.static(publicPath)) // It will load a statick page
 // })
 
 // if you want to use dynamic content with template engine
-app.get('', (req, res)=>{
+app.get('', (req, res) => {
     res.render('index', {
         title: 'Weather',
         name: 'Raja Chakraborty'
     })
 })
 
-app.get('/about', (req, res)=>{
+app.get('/about', (req, res) => {
     res.render('about', {
         title: 'About Me',
         name: 'Raja Chakraborty'
     })
 })
 
-app.get('/help',(req, res)=>{
-    res.render('help',{
+app.get('/help', (req, res) => {
+    res.render('help', {
         helpText: 'Hello There I am Raja to help you out',
         title: 'Help',
         name: 'Raja Chakraborty'
     })
 })
 
-app.get('/weather', (req, res)=>{
-   if(!req.query.address) {
+app.get('/weather', (req, res) => {
+    if (!req.query.address) {
         return res.send({
             error: 'Address must be provided!'
         })
     }
-    
-    geocode(req.query.address, (error, {latitude, longitude, location } = {})=>{
-        if(error){
-            return res.send({error})
+
+    geocode(req.query.address, (error, { latitude, longitude, location } = {}) => {
+        if (error) {
+            return res.send({ error })
         }
-        
-        forecast(latitude, longitude, (error, forecastData)=>{
+
+        forecast(latitude, longitude, (error, forecastData) => {
             if (error) {
-                return res.send({error})
+                return res.send({ error })
             }
             res.send({
                 forecast: forecastData,
@@ -93,22 +94,22 @@ app.get('/weather', (req, res)=>{
     // })
 })
 
-app.get('/products',(req, res)=>{
+app.get('/products', (req, res) => {
     res.send({
         products: []
     })
 })
 
-app.get('/help/*',(req,res)=>{
-    res.render('404',{
+app.get('/help/*', (req, res) => {
+    res.render('404', {
         title: '404',
         errorMsg: 'Help artical not found',
         name: 'Raja Chakraborty'
     })
 })
 
-app.get('*',(req,res)=>{
-    res.render('404',{
+app.get('*', (req, res) => {
+    res.render('404', {
         title: '404',
         errorMsg: 'Page not found'
     })
@@ -116,6 +117,6 @@ app.get('*',(req,res)=>{
 
 
 
-app.listen(3000,()=>{
-    console.log('Server is up on the port 3000');    
+app.listen(port, () => {
+    console.log('Server is up on the port ' + port);
 })
